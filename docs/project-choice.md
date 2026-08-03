@@ -1,0 +1,1 @@
+I am building a To-Do List MCP for people who want to organize their daily tasks so that they can add, view, and complete tasks through simple MCP tools.
