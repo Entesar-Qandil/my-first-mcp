@@ -43,3 +43,12 @@ A user asks the MCP to add a task called “Finish MCP assignment”. The `add_t
 # Demo Day Scope
 
 The three P0 tools — `add_task`, `list_tasks`, and `complete_task` — are the minimum working functionality required for the Demo Day. P1 tools may remain stubs if time is limited.
+
+
+## Notes from reading MCP Official Example Servers
+
+* Tool names are clear and action-oriented, making it easy to understand what each tool does.
+* Tool descriptions are concise and focus on the tool's purpose rather than implementation details.
+* Input descriptions explain what each field represents and help clarify how the tool should be used.
+* Error messages should be clear and specific so the user can understand what went wrong.
+* Tools are organized around focused responsibilities instead of combining multiple unrelated actions into one tool.
