@@ -1,24 +1,19 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { serveStdio } from "@modelcontextprotocol/server/stdio";
-import * as z from "zod/v4";
+
+import { registerAddTaskTool } from "./tools/addTask.js";
+import { registerListTasksTool } from "./tools/listTasks.js";
+import { registerCompleteTaskTool } from "./tools/completeTask.js";
 
 function createServer(): McpServer {
-  const server = new McpServer({ name: "my-first-mcp", version: "0.1.0" });
+  const server = new McpServer({
+    name: "my-first-mcp",
+    version: "0.2.0",
+  });
 
-  server.registerTool(
-    "greet",
-    {
-      description: "Say hello to someone by name",
-      inputSchema: z.object({
-        name: z.string().describe("The person's name to greet"),
-      }),
-    },
-    async ({ name }) => {
-      return {
-        content: [{ type: "text", text: `Hello, ${name}!` }],
-      };
-    },
-  );
+  registerAddTaskTool(server);
+  registerListTasksTool(server);
+  registerCompleteTaskTool(server);
 
   return server;
 }
