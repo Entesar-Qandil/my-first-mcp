@@ -3,6 +3,24 @@
     "id": "1",
     "title": "Finish MCP assignment",
     "description": "Complete Week 3 real data integration",
+    "status": "completed"
+  },
+  {
+    "id": "2",
+    "title": "Test new task",
+    "description": "Testing add_task Week 3",
     "status": "open"
+  },
+  {
+    "id": "3",
+    "title": "Learn MCP",
+    "description": "Finish Week 3 data integration",
+    "status": "completed"
+  },
+  {
+    "id": "4",
+    "title": "Week 3 Test",
+    "description": "Testing add task",
+    "status": "completed"
   }
 ]
