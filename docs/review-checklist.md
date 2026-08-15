@@ -1,164 +1,265 @@
-\# Peer Review Checklist
+# Peer Review – Week 4 Security Hardening
 
+## Project
 
+`my-first-mcp`
 
-\## Project
-
-
-
-my-first-mcp
-
-
-
-\## Peer Reviewer
-
-
+## Peer Reviewer
 
 Malak Qandil
 
-
-
-\## Review Date
-
-
+## Review Date
 
 August 13, 2026
 
+---
 
+## 1. Review Checklist
 
-\## Review Checklist
+* [done] Zod schemas and input validation reviewed
+* [done] Error handling reviewed
+* [done] Secrets protection reviewed
+* [done] File path protection reviewed
+* [done] Network host allowlist reviewed
+* [done] Network request timeout reviewed
+* [done] Output limits and truncation reviewed
+* [done] README/demo path reviewed
+* [done] Three P0 tools demonstrated
+* [done] Invalid input rejection demonstrated
 
+---
 
+## 2. Demo Reviewed
 
-\- \[x] Zod schemas and input validation reviewed
+The following P0 tools were exercised during the peer review:
 
-\- \[x] Error handling reviewed
+* `add_task`
+* `list_tasks`
+* `complete_task`
 
-\- \[x] Secrets protection reviewed
+The reviewer also exercised invalid inputs to verify that validation and error handling behaved as expected.
 
-\- \[x] File path protection reviewed
+---
 
-\- \[x] Network host allowlist reviewed
+## 3. Tool-Level Review Notes
 
-\- \[x] Network timeout reviewed
+### 3.1 `add_task` — Successful Call
 
-\- \[x] Output limits reviewed
+**Input:**
 
-\- \[x] README/demo path reviewed
+```json
+{
+  "title": "Review MCP security",
+  "description": "Test the hardened task tool"
+}
+```
 
-\- \[x] Three P0 tools demonstrated
+**Observed result:**
 
-\- \[x] Attack rejection demonstrated
+The server accepted the request and returned the newly created task with a generated ID and `open` status.
 
+**Reviewer result:** Passed.
 
+### 3.2 `list_tasks` — Successful Call
 
-\## What Worked
+**Input:**
 
+```json
+{}
+```
 
+**Observed result:**
 
-\- The three P0 tools, add\_task, list\_tasks, and complete\_task, were demonstrated successfully.
+The server returned the stored tasks, including the task created during the review.
 
-\- Zod validation correctly rejects invalid and overly long input.
+**Reviewer result:** Passed.
 
-\- File access is protected against path traversal.
+### 3.3 `complete_task` — Successful Call
 
-\- External network requests use a host allowlist and timeout.
+**Input:**
 
-\- Tool errors shown to the model are short and actionable.
+```json
+{
+  "id": "2"
+}
+```
 
-\- .gitignore and .env.example provide protection against accidentally committing secrets.
+**Observed result:**
 
-\- No accidental API keys or secrets were found in the repository.
+The server returned the task with ID `2` and changed its status to `completed`.
 
+**Reviewer result:** Passed.
 
+### 3.4 `add_task` — Invalid Input
 
-\## Issues Found
+**Input:**
 
+```json
+{
+  "title": "",
+  "description": "Testing invalid input"
+}
+```
 
+**Observed result:**
 
-\- The README/demo instructions should remain synchronized with the current project implementation.
+The MCP Inspector rejected the request because the `title` value failed the Zod minimum-length validation.
 
-\- Future tools should follow the same validation and security patterns.
+**Reviewer result:** Rejected as expected.
 
+### 3.5 `complete_task` — Invalid Task ID
 
+**Input:**
 
-\## Recommended Fixes
+```json
+{
+  "id": "999999"
+}
+```
 
+**Observed result:**
 
+The tool returned the short actionable error:
 
-\- Keep the existing Zod validation limits.
+`Could not complete the task. Check the task ID and try again.`
 
-\- Keep file path protection for future file tools.
+No raw stack trace was returned to the model.
 
-\- Keep the network host allowlist and timeout.
+**Reviewer result:** Rejected as expected.
 
-\- Continue avoiding secrets in the repository.
+### 3.6 `greet` — Overly Long Input
 
-\- Update the README whenever the demo flow or tool set changes.
+**Input:**
 
+A `name` value longer than 100 characters was submitted.
 
+**Observed result:**
 
-\## Action Items
+The MCP Inspector rejected the request with:
 
+`Input validation error: Invalid arguments for tool greet: name: Too big: expected string to have <=100 characters`
 
+**Reviewer result:** Rejected as expected.
 
-| Action | Owner | Due Date | Status |
+---
 
-|---|---|---|---|
+## 4. Security Controls Reviewed
 
-| Keep current validation and security controls | Entesar Qandil | End of Week 4 | Done |
+The following security controls were reviewed during the peer review:
 
-| Verify the three P0 tools after hardening | Malak Qandil | End of Week 4 | Done |
+* Zod input validation and length limits.
+* File path protection against path traversal.
+* External network host allowlisting.
+* Network request timeouts.
+* Output limits and truncation messages.
+* Short, actionable tool-facing errors.
+* `.gitignore` protection for environment files.
+* `.env.example` containing placeholders only.
+* Repository checked for accidental API keys or secrets.
+* `SECURITY.md` documenting the main security controls.
 
-| Confirm attack rejection in Inspector | Malak Qandil | End of Week 4 | Done |
+---
 
-| Keep README/demo instructions up to date | Entesar Qandil | End of Week 4 | Done |
+## 5. What Worked
 
+The three P0 tools (`add_task`, `list_tasks`, and `complete_task`) were exercised successfully.
 
+The reviewer confirmed that valid tool calls returned the expected results.
 
-\## Peer Feedback
+Invalid input was rejected by Zod validation.
 
+An invalid task ID was handled with a short actionable error instead of exposing a raw stack trace.
 
+File access is protected against path traversal.
 
-\### What Worked
+External network requests use an explicit host allowlist and timeout.
 
+Tool outputs are limited to avoid unnecessarily large responses.
 
+`.gitignore` protects environment files, and `.env.example` contains placeholders only.
 
-The project demonstrates good basic security hardening. Input validation,
+No accidental API keys or secrets were found in the repository.
 
-file path protection, network allowlisting, timeouts, output limits, and
+`SECURITY.md` documents the main security controls.
 
-secrets protection were implemented and demonstrated successfully.
+---
 
+## 6. Issues Found
 
+1. The README and demo instructions should remain synchronized with the current implementation.
+2. Future tools should follow the same validation and security patterns.
+3. Documentation should be updated whenever the available tools or demo flow changes.
 
-\### Issues Found
+---
 
+## 7. Recommended Fixes
 
+* Keep the existing Zod validation limits.
+* Continue protecting file access against path traversal.
+* Keep the network host allowlist and request timeout.
+* Continue avoiding secrets and API keys in the repository.
+* Keep tool-facing error messages short and actionable.
+* Update the README whenever the demo flow or tool set changes.
+* Apply the same security patterns to future tools.
 
-The main area to keep improving is documentation and keeping the README and
+---
 
-demo instructions synchronized with the current implementation.
+## 8. Action Items
 
+| Action Item                                      | Owner          | Due Date      | Status |
+| ------------------------------------------------ | -------------- | ------------- | ------ |
+| Keep current validation and security controls    | Entesar Qandil | End of Week 4 | Done   |
+| Verify the three P0 tools after hardening        | Malak Qandil   | End of Week 4 | Done   |
+| Confirm invalid-input rejection in Inspector     | Malak Qandil   | End of Week 4 | Done   |
+| Keep README/demo instructions synchronized       | Entesar Qandil | End of Week 4 | Done   |
+| Apply the same security patterns to future tools | Entesar Qandil | End of Week 4 | Done   |
 
+---
 
-\### Recommended Fixes
+## 9. Peer Feedback
 
+### What Worked
 
+The project demonstrates good basic security hardening. Input validation, file path protection, network allowlisting, timeouts, output limits, and secrets protection were implemented and reviewed successfully.
 
-Keep the existing security controls in place and update the documentation
+The three P0 tools were exercised and returned the expected results for valid calls.
 
-whenever the tools or demo flow change.
+Invalid inputs were rejected by the validation layer, and invalid task IDs produced short actionable errors.
 
+### Issues Found
 
+The main area to keep improving is documentation and keeping the README and demo instructions synchronized with the current implementation.
 
-\## Review Outcome
+Future tools should follow the same validation and security patterns.
 
+### Recommended Fixes
 
+Keep the existing validation and security controls in place.
 
-The Week 4 security hardening was reviewed with the peer. The P0 tools and
+Continue protecting file access and network requests.
 
-security controls were demonstrated, including rejection of invalid input.
+Keep secrets out of the repository.
 
-The project is ready to move forward after the documented follow-up items.
+Update the README whenever the tools or demo flow changes.
 
+---
+
+## 10. Review Outcome
+
+The Week 4 security hardening was reviewed with peer reviewer Malak Qandil.
+
+The three P0 tools were exercised:
+
+* `add_task`
+* `list_tasks`
+* `complete_task`
+
+The review also included invalid-input testing and verification of security controls.
+
+The documented follow-up items are focused mainly on keeping the README and demo documentation synchronized with the implementation.
+
+**Peer reviewer:** Malak Qandil
+
+**Review status:** Completed
+
+**Project status:** Ready to move forward after the documented follow-up items are addressed.
