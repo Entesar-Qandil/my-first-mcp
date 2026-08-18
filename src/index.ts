@@ -215,6 +215,7 @@ function createServer(): McpServer {
       inputSchema: z.object({
         title: z
           .string()
+          .trim()
           .min(1)
           .max(200)
           .describe("The title of the task"),
