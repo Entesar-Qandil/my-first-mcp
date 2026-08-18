@@ -27,3 +27,7 @@ To test the server with MCP Inspector, run:
 
 ```bash
 npx @modelcontextprotocol/inspector npx tsx src/index.ts
+
+## Example Conversations
+
+See [`examples/conversations.md`](examples/conversations.md) for three example conversations showing how a model can use the MCP tools.
